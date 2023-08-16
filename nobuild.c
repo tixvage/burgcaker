@@ -1,9 +1,9 @@
 #define NOBUILD_IMPLEMENTATION
 #include "./nobuild.h"
 
-#define COMMON_CFLAGS "-Wall", "-Wextra", "-Werror", "-Wno-sign-compare", "-pedantic", "-std=c11", "-ggdb", "-O0", "-I.", "-Ilibs/raylib/src"
+#define COMMON_CFLAGS "-Wall", "-Wextra", "-Werror", "-Wno-sign-compare", "-pedantic", "-std=c11", "-ggdb", "-O0", "-Isrc/", "-Ilibs/raylib/src/"
 #define CC "clang"
-#define SRCS "main.c", "buffer.c", "common.c"
+#define SRCS "src/main.c", "src/buffer.c", "src/common.c"
 
 const char *program = NULL;
 

@@ -11,38 +11,10 @@
 
 #define FONT_SIZE 48
 
-void draw_text(Font font, String text, Vector2 position, float font_size, Color color) {
-    char *ptr = (char *)&text.data[0];
-
-    float x = position.x;
-    float y = position.y;
-
-    for (int i = 0; i < text.len; i++) {
-        int next = 0;
-        int letter = GetCodepointNext(ptr, &next);
-        int index = GetGlyphIndex(font, letter);
-        ptr += next;
-        i += next - 1;
-
-        if (letter == '\n') {
-            y += font_size;
-            x = position.x;
-            continue;
-        }
-
-        if ((letter != ' ') && (letter != '\t')) {
-            DrawTextCodepoint(font, letter, (Vector2){ x, y }, font_size, color);
-        }
-
-        if (font.glyphs[index].advanceX == 0) x += (float)font.recs[index].width;
-        else x += (float)font.glyphs[index].advanceX;
-    }
-}
-
 int main(void) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "uno");
-    Font font = LoadFontEx("font.ttf", FONT_SIZE, NULL, 1568);
+    Font font = LoadFontEx("font/Source-Code-Pro.ttf", FONT_SIZE, NULL, 1568);
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
 
     Buffer buffer = create_buffer_from_file("text.txt", font, global_allocator);
