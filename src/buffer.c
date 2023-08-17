@@ -32,12 +32,6 @@ Buffer create_buffer_from_file(const char *path, Font default_font, Allocator al
     buffer.lines = init_lines(allocator);
     buffer.cursors.allocator = allocator;
     add_cursor(&buffer, 0);
-    add_cursor(&buffer, 3);
-    add_cursor(&buffer, 6);
-    add_cursor(&buffer, 9);
-    add_cursor(&buffer, 12);
-    add_cursor(&buffer, 15);
-    add_cursor(&buffer, 18);
     buffer.font = default_font;
     buffer.font_size = default_font.baseSize;
     buffer.texture = LoadRenderTexture(800, 600);
@@ -199,6 +193,7 @@ int buffer_find_previous_char_loc(Buffer *b, Cursor c) {
 
         return line.begin + last_one;
     } else if (column != 0) {
+        //TODO: dos files won't like that
         return c - 1;
     }
 
@@ -208,12 +203,19 @@ int buffer_find_previous_char_loc(Buffer *b, Cursor c) {
 int buffer_find_next_char_loc(Buffer *b, Cursor c) {
     int column = buffer_get_cursor_line(b, c);
     Line line = b->lines.data[column];
-    String_View line_str = {b->data.data + c, c - line.end};
-    char *ptr = (char *)&line_str.ptr[0];
-    int next = 0;
-    GetCodepointNext(ptr, &next);
+    String_View line_str = {b->data.data + c, line.end - c};
+    if (line_str.len != 0) {
+        char *ptr = (char *)&line_str.ptr[0];
+        int next = 0;
+        GetCodepointNext(ptr, &next);
 
-    return c + next;
+        return c + next;
+    } else if (column != b->lines.len - 1) {
+        //TODO: dos files won't like that
+        return c + 1;
+    }
+
+    return 0;
 }
 
 void buffer_insert(Buffer *b, const char *d, int len) {
