@@ -1,7 +1,7 @@
 #define NOBUILD_IMPLEMENTATION
 #include "./nobuild.h"
 
-#define COMMON_CFLAGS "-Wall", "-Wextra", "-Werror", "-Wno-sign-compare", "-pedantic", "-std=c11", "-ggdb", "-O0", "-Isrc/", "-Ilibs/raylib/src/"
+#define COMMON_CFLAGS "-Wall", "-Wextra", "-Werror", "-Wno-sign-compare", "-Wno-gnu-label-as-value", "-pedantic", "-std=c11", "-ggdb", "-O0", "-Isrc/", "-Ilibs/raylib/src/", "-Ilibs/minilua/"
 #define CC "clang"
 #define SRCS "src/main.c", "src/buffer.c", "src/common.c"
 
@@ -14,6 +14,8 @@ void usage(void) {
     INFO("        Build program");
     INFO("    build-raylib");
     INFO("        Build raylib");
+    INFO("    build-minilua");
+    INFO("        Build minilua");
 }
 
 void build(void) {
@@ -21,14 +23,20 @@ void build(void) {
         usage();
         PANIC("First of all go and build raylib");
     }
+    if (!path_exists("libs/minilua/minilua.o")) {
+        usage();
+        PANIC("First of all go and build minilua");
+    }
     MKDIRS("build");
-    CMD(CC, COMMON_CFLAGS, "-o", "./build/uno", SRCS, "-lm", "-Llibs/raylib/src/", "-lraylib");
+    CMD(CC, COMMON_CFLAGS, "-o", "./build/uno", SRCS, "libs/minilua/minilua.o", "-lm", "-Llibs/raylib/src/", "-lraylib");
 }
 
 void build_raylib(void) {
-    MKDIRS("build");
-    CMD("cd", "libs/raylib/src");
     CMD("make", "-C", "libs/raylib/src");
+}
+
+void build_minilua(void) {
+    CMD(CC, "-c", "libs/minilua/minilua.c", "-Ilibs/minilua/", "-o", "libs/minilua/minilua.o");
 }
 
 void run(void) {
@@ -45,12 +53,13 @@ int main(int argc, char **argv) {
             build();
         } else if (strcmp(subcmd, "build-raylib") == 0) {
             build_raylib();
+        } else if (strcmp(subcmd, "build-minilua") == 0) {
+            build_minilua();
         } else {
             usage();
             PANIC("Unknown command `%s`", subcmd);
         }
     } else {
-        build_raylib();
         build();
         run();
     }
