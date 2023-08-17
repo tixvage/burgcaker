@@ -5,6 +5,8 @@
 
 #include "buffer.h"
 
+#include "minilua.h"
+
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 #define BACKGROUND_COLOR (Color){28,28,28,255}
@@ -18,6 +20,10 @@ int main(void) {
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
 
     Buffer buffer = create_buffer_from_file("text.txt", font, global_allocator);
+
+    lua_State *L = luaL_newstate();
+    luaL_openlibs(L);
+    luaL_dofile(L, "script.lua");
 
     while (!WindowShouldClose()) {
         BeginDrawing();
