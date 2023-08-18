@@ -86,11 +86,51 @@ void tokenize_buffer(Buffer *b) {
     array_push(b->lines, Line, line);
 }
 
+int get_digit_count(int n) {
+    int count = 0;
+    
+    while(n>0){
+        count++;
+        n = n/10;
+    }
+
+    return count;
+}
+
 void prepare_buffer(Buffer *b) {
     BeginTextureMode(b->texture);
 
     ClearBackground(BACKGROUND_COLOR);
-    
+    float offset_x = 0;
+    {
+        int total_lines = b->lines.len;
+        int max_digit = get_digit_count(total_lines);
+        char *curr_line_number = b->allocator.alloc_func(max_digit + 1);
+        memset(curr_line_number, 0, max_digit + 1);
+        float y = 0;
+        for (int i = 1; i <= total_lines; i++) {
+            int digit = get_digit_count(i);
+            for (int j = 0; j < max_digit - digit; j++) {
+                curr_line_number[j] = '0';
+            }
+            snprintf(&curr_line_number[max_digit - digit], max_digit + 1, "%d", i);
+
+            float x = 0;
+            for (int j = 0; j < max_digit; j++) {
+                int c = curr_line_number[j];
+                int index = GetGlyphIndex(b->font, c);
+                DrawTextCodepoint(b->font, c, (Vector2){ x, y }, b->font_size, (Color){ 0x68, 0x68, 0x68, 0xff });
+                if (b->font.glyphs[index].advanceX == 0) x += (float)b->font.recs[index].width;
+                else x += (float)b->font.glyphs[index].advanceX;
+            }
+            offset_x = x + b->font_size / 2;
+            y += b->font_size;
+
+            memset(curr_line_number, 0, max_digit + 1);
+        }
+        b->allocator.free_func(curr_line_number);
+    }
+
     for (int i = 0; i < b->cursors.len; i++) {
         Cursor c = b->cursors.data[i];
         int y = buffer_get_cursor_line(b, c);
@@ -102,13 +142,13 @@ void prepare_buffer(Buffer *b) {
         int x = MeasureTextEx(b->font, str.data, b->font_size, 0).x;
         array_free(str);
         Rectangle cursor_rect = {
-            .x = x,
+            .x = x + offset_x,
             .y = y * b->font_size,
             //TODO: this must be something better
             .width = b->font_size / 2,
             .height = b->font_size,
         };
-        DrawRectangleRec(cursor_rect, (Color){0, 210, 30, 50});
+        DrawRectangleRec(cursor_rect, (Color){ 0, 210, 30, 50 });
     }
 
     float y = 0;
@@ -127,7 +167,7 @@ void prepare_buffer(Buffer *b) {
 
             assert(letter != '\n');
             if ((letter != ' ') && (letter != '\t')) {
-                DrawTextCodepoint(b->font, letter, (Vector2){ x, y }, b->font_size, WHITE);
+                DrawTextCodepoint(b->font, letter, (Vector2){ x + offset_x, y }, b->font_size, (Color){ 0xbc, 0x7c, 0x2c, 0xff });
             }
 
             if (b->font.glyphs[index].advanceX == 0) x += (float)b->font.recs[index].width;
@@ -289,8 +329,10 @@ void buffer_left(Buffer *b) {
         if (*c > 0) *c = buffer_find_previous_char_loc(b, *c);
     }
     check_cursors_buffer(b);
+
     prepare_buffer(b);
 }
+
 
 void buffer_right(Buffer *b) {
     for (int i = 0; i < b->cursors.len; i++) {
