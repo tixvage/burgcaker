@@ -4,14 +4,37 @@
 #include <stdio.h>
 
 #include "buffer.h"
-
 #include "minilua.h"
+#include "config.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
-#define BACKGROUND_COLOR (Color){28,28,28,255}
 
 #define FONT_SIZE 48
+
+/*
+ * IDEA
+ * lua scripts gonna work like addons for editor
+ * c side will contain:
+ * cursor system
+ * openning saving files
+ * window system (splitting buffers)
+ * different types of buffers:
+ * default buffer (normal text files)
+ * mini buffer (ESC ':' in vim & M-x in emacs)
+ * popup buffer (like fzf in vim)
+ * 'main addon of lua' will contain:
+ * file navigation
+ * switching between buffers
+ * etc...
+ */
+
+
+int inc(lua_State *L) {
+    float rtrn = lua_tonumber(L, -1);
+    lua_pushnumber(L, rtrn + 1);
+    return 1;
+}
 
 int main(void) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -23,6 +46,7 @@ int main(void) {
 
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
+    lua_register(L, "inc", inc);  
     luaL_dofile(L, "script.lua");
 
     while (!WindowShouldClose()) {

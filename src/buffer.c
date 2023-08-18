@@ -1,6 +1,7 @@
 #include "buffer.h"
 #include <stdio.h>
 #include <assert.h>
+#include "config.h"
 
 Lines init_lines(Allocator allocator) {
     return (Lines){ NULL, 0, 0, allocator };
@@ -86,7 +87,7 @@ void tokenize_buffer(Buffer *b) {
 void prepare_buffer(Buffer *b) {
     BeginTextureMode(b->texture);
 
-    ClearBackground(BLACK);
+    ClearBackground(BACKGROUND_COLOR);
     
     for (int i = 0; i < b->cursors.len; i++) {
         Cursor c = b->cursors.data[i];
@@ -97,9 +98,11 @@ void prepare_buffer(Buffer *b) {
         array_append(str, ptr, c - line.begin);
         array_push(str, char, 0);
         int x = MeasureTextEx(b->font, str.data, b->font_size, 0).x;
+        array_free(str);
         Rectangle cursor_rect = {
             .x = x,
             .y = y * b->font_size,
+            //TODO: this must be something better
             .width = b->font_size / 2,
             .height = b->font_size,
         };
