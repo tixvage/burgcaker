@@ -36,7 +36,7 @@ int inc(lua_State *L) {
 
 int main(void) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "uno");
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "burgcaker");
     Font font = LoadFontEx("font/Source-Code-Pro.ttf", FONT_SIZE, NULL, 1568);
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
 
