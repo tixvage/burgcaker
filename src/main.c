@@ -10,8 +10,6 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
-#define FONT_SIZE 48
-
 /*
  * IDEA
  * lua scripts gonna work like addons for editor
