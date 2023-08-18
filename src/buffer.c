@@ -146,10 +146,22 @@ void buffer_refresh(Buffer *b) {
     prepare_buffer(b);
 }
 
-void buffer_draw(Buffer *b, Vector2 position) {
+void buffer_draw(Buffer *b, Vector2 split_position, float w_f, float h_f) {
     Texture2D texture = b->texture.texture;
-    Rectangle source = { 0, 0, texture.width, -texture.height };
-    DrawTextureRec(texture, source, position, WHITE);
+    float s_w = GetScreenWidth();
+    float s_h = GetScreenHeight();
+    float height = s_h / h_f;
+    //TODO: we need to calculate y according to cursor position
+    Rectangle source = { 0, texture.height - height, s_w / w_f, -height};
+    Vector2 position = { 0 };
+    if (split_position.x != 0) {
+        position.x = s_w / w_f;
+    }
+    if (split_position.y != 0) {
+        position.y = s_h / h_f;
+    }
+    Rectangle destination = { position.x, position.y, source.width, -source.height };
+    DrawTexturePro(texture, source, destination, (Vector2){ 0 }, 0, WHITE);
 }
 
 int buffer_get_cursor_line(Buffer *b, Cursor c) {

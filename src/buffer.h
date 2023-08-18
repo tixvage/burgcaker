@@ -27,7 +27,7 @@ typedef struct Buffer {
 
 Buffer create_buffer_from_file(const char *path, Font default_font, Allocator allocator);
 void buffer_refresh(Buffer *b);
-void buffer_draw(Buffer *b, Vector2 position);
+void buffer_draw(Buffer *b, Vector2 split_position, float w_f, float h_f);
 
 int buffer_get_cursor_line(Buffer *b, Cursor c);
 Vector2 buffer_get_cursor_position(Buffer *b, Cursor c);

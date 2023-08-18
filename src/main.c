@@ -42,7 +42,9 @@ int main(void) {
     Font font = LoadFontEx("font/Source-Code-Pro.ttf", FONT_SIZE, NULL, 1568);
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
 
-    Buffer buffer = create_buffer_from_file("text.txt", font, global_allocator);
+    Buffer buffer1 = create_buffer_from_file("text.txt", font, global_allocator);
+
+    Buffer *buffer = &buffer1;
 
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
@@ -57,24 +59,26 @@ int main(void) {
         if (input_char != 0) {
             int len = 0;
             const char *bytes = CodepointToUTF8(input_char, &len);
-            buffer_insert(&buffer, bytes, len);
+            buffer_insert(buffer, bytes, len);
         }
 
         int input_key = GetKeyPressed();
 
         if (input_key == KEY_ENTER) {
-            buffer_insert(&buffer, "\n", 1);
+            buffer_insert(buffer, "\n", 1);
         }
         if (input_key == KEY_BACKSPACE) {
-            buffer_backspace(&buffer);
+            buffer_backspace(buffer);
         }
         if (input_key == KEY_LEFT) {
-            buffer_left(&buffer);
+            buffer_left(buffer);
         }
         if (input_key == KEY_RIGHT) {
-            buffer_right(&buffer);
+            buffer_right(buffer);
         }
-        buffer_draw(&buffer, (Vector2){20, 20});
+        buffer_draw(&buffer1, (Vector2){0, 0}, 1, 2);
+        buffer_draw(&buffer1, (Vector2){0, 1}, 1, 2);
+        buffer_draw(&buffer1, (Vector2){1, 1}, 2, 2);
         EndDrawing();
     }
 
