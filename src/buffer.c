@@ -35,7 +35,9 @@ Buffer create_buffer_from_file(const char *path, Font default_font, Allocator al
     add_cursor(&buffer, 0);
     buffer.font = default_font;
     buffer.font_size = default_font.baseSize;
-    buffer.texture = LoadRenderTexture(800, 600);
+
+    int monitor = GetCurrentMonitor();
+    buffer.texture = LoadRenderTexture(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
     buffer.allocator = allocator;
     buffer_refresh(&buffer);
     return buffer;
