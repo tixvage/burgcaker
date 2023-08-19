@@ -1,13 +1,13 @@
 # burgcaker
 
-# Requirements
+# Quick Start 
+
+## Requirements
 
 * C compiler
 * Make (will be removed in the feature)
 
-# Quick Start 
-
-## Compile and run
+## Compile and Run
 
 ```console
 $ mkdir build
