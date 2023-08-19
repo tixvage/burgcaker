@@ -112,7 +112,7 @@ void prepare_buffer(Buffer *b) {
         for (int i = 1; i <= total_lines; i++) {
             int digit = get_digit_count(i);
             for (int j = 0; j < max_digit - digit; j++) {
-                curr_line_number[j] = '0';
+                curr_line_number[j] = ' ';
             }
             snprintf(&curr_line_number[max_digit - digit], max_digit + 1, "%d", i);
 
