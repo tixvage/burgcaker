@@ -36,7 +36,9 @@ void build_raylib(void) {
 }
 
 void build_minilua(void) {
+    MKDIRS("build");
     CMD(CC, "-c", "libs/minilua/minilua.c", "-Ilibs/minilua/", "-o", "libs/minilua/minilua.o");
+    CMD(CC, "libs/minilua/minilua_exec.c", "-Ilibs/minilua/", "-o", "build/lua", "-lm");
 }
 
 void run(void) {
