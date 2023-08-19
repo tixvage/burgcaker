@@ -21,8 +21,9 @@ local function get_os()
 end
 
 local function path_exists(name)
-   local f=io.open(name,"r")
-   if f~=nil then io.close(f) return true else return false end
+   --local f=io.open(name,"r")
+   --if f~=nil then io.close(f) return true else return false end
+   return os.rename(name,name) and true or false
 end
 
 local function info(f, ...)
@@ -37,7 +38,10 @@ local function panic(f, ...)
 end
 
 local function path(p)
-    if get_os() == "win" then return p:gsub("\\", "/") else return p end
+    if get_os() == "win" then
+        local s, _ = string.gsub(p, "/", "\\")
+        return s
+    else return p end
 end
 
 local function exec(args)
@@ -48,7 +52,8 @@ local function exec(args)
 end
 
 local function mkdir(p)
-    exec({"mkdir", "-p", p})
+    if get_os() == "unix" then exec({"mkdir", "-p", p})
+    else if not path_exists(p .. path("/")) then exec({"mkdir", p}) end end
 end
 
 local function run()
