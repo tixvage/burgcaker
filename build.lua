@@ -21,8 +21,6 @@ local function get_os()
 end
 
 local function path_exists(name)
-   --local f=io.open(name,"r")
-   --if f~=nil then io.close(f) return true else return false end
    return os.rename(name,name) and true or false
 end
 
@@ -108,6 +106,8 @@ local function main()
             build_raylib()
         elseif subcmd == "build-minilua" then
             build_minilua()
+        elseif subcmd == "run" then
+            run()
         else usage() end
     else
         build()
