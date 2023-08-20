@@ -74,9 +74,7 @@ int main(void) {
         if (input_key == KEY_RIGHT) {
             buffer_right(buffer);
         }
-        buffer_draw(&buffer1, (Vector2){0, 0}, 1, 2);
-        buffer_draw(&buffer1, (Vector2){0, 1}, 1, 2);
-        buffer_draw(&buffer1, (Vector2){1, 1}, 2, 2);
+        buffer_draw(buffer, (Vector2){0, 0}, 1, 1);
         EndDrawing();
     }
 

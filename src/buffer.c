@@ -203,7 +203,6 @@ void buffer_draw(Buffer *b, Vector2 split_position, float w_f, float h_f) {
     }
     Rectangle destination = { position.x, position.y, source.width, -source.height };
     DrawTexturePro(texture, source, destination, (Vector2){ 0 }, 0, WHITE);
-    DrawRectangleRec((Rectangle){destination.x, destination.y + destination.height - 21, destination.width, 20}, GRAY);
     DrawRectangleLinesEx(destination, 1.f, BLACK);
 }
 
