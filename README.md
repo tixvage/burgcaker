@@ -12,9 +12,9 @@
 ```console
 $ mkdir build
 $ gcc libs/minilua/minilua_exec.c -o build/lua -lm
-$ build/lua build-raylib
-$ build/lua build-minilua
-$ build/lua
+$ build/lua build.lua build-raylib
+$ build/lua build.lua build-minilua
+$ build/lua build.lua
 ```
 
 # Font
