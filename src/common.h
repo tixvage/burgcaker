@@ -60,6 +60,8 @@ typedef struct String {
 
 #define array_free(a) do { a.allocator.free_func(a.data); a.data = NULL; a.len = 0; a.capacity = 0; } while(0)
 
+#define array_copy(a, T) ({ T ___na = a; ___na.data = ___na.allocator.alloc_func((___na.capacity) * sizeof(___na.data[0])); memcpy(___na.data, a.data, sizeof(___na.data[0]) * ___na.len); ___na; })
+
 #define str_append_cstr(str, cstr) do { int ___len = strlen(cstr); array_append(str, cstr, ___len); } while(0)
 
 #define str_global_allocator() \

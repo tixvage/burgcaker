@@ -60,7 +60,7 @@ end
 
 -- BUILD SCRIPT
 local CC = "clang"
-local CFLAGS = {"-Wall", "-Wextra", "-Werror", "-Wno-sign-compare", "-Wno-gnu-label-as-value", "-pedantic", "-std=c11", "-ggdb", "-O0", "-Isrc/", "-Ilibs/raylib/src/", "-Ilibs/minilua/"}
+local CFLAGS = {"-Wall", "-Wextra", "-Werror", "-Wno-sign-compare", "-Wno-gnu-label-as-value", "-pedantic", "-std=c11", "-ggdb", "-O0", "-Isrc/", "-Ilibs/raylib/src/", "-Ilibs/minilua/", "-Wno-gnu-statement-expression-from-macro-expansion"}
 local LIBS = {path("libs/minilua/minilua.o"), "-lm", "-Llibs/raylib/src/", "-lraylib"}
 local SRCS = {path("src/main.c"), path("src/buffer.c"), path("src/common.c")}
 
