@@ -3,17 +3,13 @@
 #include <assert.h>
 #include "config.h"
 
-Lines init_lines(Allocator allocator) {
-    return (Lines){ NULL, 0, 0, allocator };
-}
-
-void swap(Cursor *xp, Cursor *yp) {
+static void swap(Cursor *xp, Cursor *yp) {
     Cursor temp = *xp;
     *xp = *yp;
     *yp = temp;
 }
   
-void selection_sort(Cursor *arr, int n) {
+static void selection_sort(Cursor *arr, int n) {
     Cursor i, j, min_idx;
     for (i = 0; i < n - 1; i++) {
         min_idx = i;
@@ -22,28 +18,12 @@ void selection_sort(Cursor *arr, int n) {
     }
 }
 
-void add_cursor(Buffer *b, Cursor c) {
+static void add_cursor(Buffer *b, Cursor c) {
     array_push(b->cursors, Cursor, c);
     selection_sort(b->cursors.data, b->cursors.len);
 }
 
-Buffer create_buffer_from_file(const char *path, Font default_font, Allocator allocator) {
-    Buffer buffer = {0};
-    buffer.data = read_entire_file(path, allocator);
-    buffer.lines = init_lines(allocator);
-    buffer.cursors.allocator = allocator;
-    add_cursor(&buffer, 0);
-    buffer.font = default_font;
-    buffer.font_size = default_font.baseSize;
-
-    int monitor = GetCurrentMonitor();
-    buffer.texture = LoadRenderTexture(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
-    buffer.allocator = allocator;
-    buffer_refresh(&buffer);
-    return buffer;
-}
-
-void check_cursors_buffer(Buffer *b) {
+static void check_cursors_buffer(Buffer *b) {
     Cursors new_cursors = {NULL, 0, 0, b->allocator };
     int unique_count = 0;
     for (int i = 0; i < b->cursors.len; i++) {
@@ -64,7 +44,7 @@ void check_cursors_buffer(Buffer *b) {
     b->cursors = new_cursors;
 }
 
-void tokenize_buffer(Buffer *b) {
+static void tokenize_buffer(Buffer *b) {
     b->lines.len = 0;
     int begin = 0;
     int end = 0;
@@ -86,7 +66,7 @@ void tokenize_buffer(Buffer *b) {
     array_push(b->lines, Line, line);
 }
 
-int get_digit_count(int n) {
+static int get_digit_count(int n) {
     int count = 0;
     
     while(n>0){
@@ -98,7 +78,7 @@ int get_digit_count(int n) {
 }
 
 //TODO: REAL CLEANUP
-void prepare_buffer(Buffer *b) {
+static void prepare_buffer(Buffer *b) {
     BeginTextureMode(b->texture);
 
     ClearBackground(BACKGROUND_COLOR);
@@ -106,7 +86,7 @@ void prepare_buffer(Buffer *b) {
     {
         int total_lines = b->lines.len;
         int max_digit = get_digit_count(total_lines);
-        char *curr_line_number = b->allocator.alloc_func(max_digit + 1);
+        char *curr_line_number = b->allocator.alloc(max_digit + 1);
         memset(curr_line_number, 0, max_digit + 1);
         float y = 0;
         for (int i = 1; i <= total_lines; i++) {
@@ -129,7 +109,7 @@ void prepare_buffer(Buffer *b) {
 
             memset(curr_line_number, 0, max_digit + 1);
         }
-        b->allocator.free_func(curr_line_number);
+        b->allocator.free(curr_line_number);
     }
 
     for (int i = 0; i < b->cursors.len; i++) {
@@ -181,12 +161,35 @@ void prepare_buffer(Buffer *b) {
     EndTextureMode();
 }
 
+Lines init_lines(Allocator allocator) {
+    return (Lines){ NULL, 0, 0, allocator };
+}
+
+Buffer create_buffer_from_file(const char *path, Font default_font, Allocator allocator) {
+    Buffer buffer = {0};
+    buffer.data = read_entire_file(path, allocator);
+    buffer.lines = init_lines(allocator);
+    buffer.cursors.allocator = allocator;
+    add_cursor(&buffer, 0);
+    buffer.font = default_font;
+    buffer.font_size = default_font.baseSize;
+
+    //TODO: may cause some issues with multiple monitors
+    int monitor = GetCurrentMonitor();
+    buffer.texture = LoadRenderTexture(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
+    buffer.allocator = allocator;
+    buffer_refresh(&buffer);
+    return buffer;
+}
+
+
 void buffer_refresh(Buffer *b) {
     check_cursors_buffer(b);
     tokenize_buffer(b);
     prepare_buffer(b);
 }
 
+//TODO: thats bad
 void buffer_draw(Buffer *b, Vector2 split_position, float w_f, float h_f) {
     Texture2D texture = b->texture.texture;
     float s_w = GetScreenWidth();

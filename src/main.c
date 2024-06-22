@@ -49,6 +49,8 @@ int main(void) {
     lua_register(L, "inc", inc);  
     luaL_dofile(L, "script.lua");
 
+    SetTargetFPS(60);
+
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(BACKGROUND_COLOR);
@@ -74,11 +76,10 @@ int main(void) {
         if (input_key == KEY_RIGHT) {
             buffer_right(buffer);
         }
-        buffer_draw(buffer, (Vector2){0, 0}, 1, 1);
+        buffer_draw(buffer, (Vector2){0, 0}, 2, 1);
         EndDrawing();
     }
 
     CloseWindow();
     return 0;
 }
-

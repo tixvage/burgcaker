@@ -28,15 +28,15 @@ void g_free(void *ptr) {
 Allocator global_allocator = { g_malloc, g_realloc, g_free };
 
 void *global_alloc(int size) {
-    return global_allocator.alloc_func(size);
+    return global_allocator.alloc(size);
 }
 
 void *global_realloc(void *ptr, int size) {
-    return global_allocator.realloc_func(ptr, size);
+    return global_allocator.realloc(ptr, size);
 }
 
 void global_free(void *ptr) {
-    global_allocator.free_func(ptr);
+    global_allocator.free(ptr);
 }
 
 String read_entire_file(const char *filename, Allocator allocator) {
@@ -53,7 +53,7 @@ String read_entire_file(const char *filename, Allocator allocator) {
     len = ftell(f);
     assert(len > 0);
     fseek(f, 0, SEEK_SET);
-    text = allocator.alloc_func(len + 1);
+    text = allocator.alloc(len + 1);
     assert(text != NULL);
     fread(text, 1, len, f);
     text[len] = 0;
@@ -63,7 +63,7 @@ String read_entire_file(const char *filename, Allocator allocator) {
     String str = { NULL, 0, 0, allocator };
     str_append_cstr(str, text);
 
-    allocator.free_func(text);
+    allocator.free(text);
 
     return str;
 }
